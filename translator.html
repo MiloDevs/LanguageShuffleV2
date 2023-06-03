@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Document</title>
+    <script src="https://kit.fontawesome.com/4ed104f89b.js" crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body class="bg-dark">
+    <div style="height: 100vh;" class="d-flex align-items-center justify-content-center">
+        <form onsubmit="e.preventDefault()" id="form" class="card p-5" action="">
+            <h1>Text Shuffler</h1>
+            <div class="row g-3 pb-2">
+                <div class="col-auto">
+                    <select class="form-select" name="" id="translate-from" required>
+                        <option selected>Translate From</option>
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <select class="form-select" name="" id="translate-to" required>
+                        <option selected>Translate To</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row pb-2">
+                <div class="col">
+                    <label class="form-label" for="input-area">Input</label>
+                    <textarea required class="form-control" style="resize: none;" name="input-area" id="input-field"
+                        cols="30" rows="10"></textarea>
+                </div>
+                <div class="col">
+                    <div class="row">
+                        <div class="col">
+                            <label class="form-label" for="output-area">Output</label>
+                        </div>
+                        <div class="col">
+                            <a href="#"><i class="fa-regular fa-clipboard btn btn-outline-primary"></i></i></a>
+                        </div>
+                    </div>
+                    <textarea readonly disabled class="form-control" style="resize: none;" name="output-area"
+                        id="output-field" cols="30" rows="10"></textarea>
+                </div>
+            </div>
+            <div class="row justify-content-between">
+                <div class="col">
+                    <button class="btn btn-primary" id="translate-button">
+                        <i class="fa-solid fa-language"></i>
+                        Translate
+                    </button>
+                </div>
+
+                <div class="col">
+                    <button class="btn btn-primary" id="shuffle-button">
+                        <i class="fa-solid fa-dice-five"></i>
+                        Shuffle
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+    <!--BootStrap-->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+
+    <!--MyCode-->
+
+    <script>
+        const form = document.getElementById("form");
+        const translatefrom = document.getElementById("translate-from");
+        const translateto = document.getElementById("translate-to");
+        const outputfield = document.getElementById("output-field");
+        const inputfield = document.getElementById("input-field");
+        const translatebutton = document.getElementById('translate-button');
+        const shufflebutton = document.getElementById('shuffle-button');
+
+        const languages = [
+            { language: 'English', code: 'en' },
+            { language: 'Spanish', code: 'es' },
+            { language: 'French', code: 'fr' },
+            { language: 'German', code: 'de' },
+            { language: 'Chinese', code: 'zh' },
+            { language: 'Japanese', code: 'ja' },
+            { language: 'Korean', code: 'ko' },
+            { language: 'Italian', code: 'it' },
+            { language: 'Russian', code: 'ru' },
+            { language: 'Portuguese', code: 'pt' },
+        ];
+        //const url = 'https://google-translate1.p.rapidapi.com/language/translate/v2';
+
+
+        //setuplanguages
+
+        function getLangs() {
+            const url = 'https://rapid-translate.p.rapidapi.com/GetLanguages';
+            const options = {
+                method: 'GET',
+                headers: {
+                    'X-RapidAPI-Key': '7d242483d0msh9b86a24283da292p1bb262jsn26b52d8d86f8',
+                    'X-RapidAPI-Host': 'rapid-translate.p.rapidapi.com'
+                }
+            };
+            fetch(url, options)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(lang => {
+                        translatefrom.innerHTML += `<option value='${lang.code}'>${lang.englishName}</option>`;
+                        translateto.innerHTML += `<option value='${lang.code}'>${lang.englishName}</option>`
+                    });
+                });
+        }
+
+        getLangs();
+
+        /*
+        languages.forEach(language => {
+            translatefrom.innerHTML += `<option value='${language.code}'>${language.language}</option>`;
+            translateto.innerHTML += `<option value='${language.code}'>${language.language}</option>`
+        });
+        */
+
+        //TranslateText
+        function TranslateText() {
+
+            const url = 'https://rapid-translate.p.rapidapi.com/TranslateText';
+            const options = {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json',
+                    'X-RapidAPI-Key': '7d242483d0msh9b86a24283da292p1bb262jsn26b52d8d86f8',
+                    'X-RapidAPI-Host': 'rapid-translate.p.rapidapi.com'
+                },
+                body: {
+                    from: 'en',
+                    text: 'Hello World',
+                    to: 'fr-fr'
+                }
+            };
+
+            fetch(url, options)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.result);
+
+                }).catch(error => alert(error));
+        }
+
+        //translatefunction
+        translatebutton.addEventListener('click', e => {
+            e.preventDefault();
+
+            TranslateText();
+
+        });
+
+
+        /* shufflebutton.addEventListener('click', e => {
+            e.preventDefault();
+
+
+
+            languages.forEach(language => {
+
+                setTimeout(() => {
+                    const options = {
+                        method: 'POST',
+                        headers: {
+                            'content-type': 'application/x-www-form-urlencoded',
+                            'Accept-Encoding': 'application/gzip',
+                            'X-RapidAPI-Key': '7d242483d0msh9b86a24283da292p1bb262jsn26b52d8d86f8',
+                            'X-RapidAPI-Host': 'google-translate1.p.rapidapi.com'
+                        },
+                        body: new URLSearchParams({
+                            q: inputfield.value,
+                            target: language.code,
+                            source: translatefrom.value
+                        })
+                    };
+
+                    fetch(url, options)
+                        .then(response => response.json())
+                        .then(data => {
+                            outputfield.textContent = data.data.languages[0].translatedText;
+
+                        });
+                }, 1000);
+            })
+
+        });*/
+
+
+        //GoogleApiCalls
+
+
+    </script>
+</body>
+
+</html>
